@@ -1,17 +1,33 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
+@section('content')
+<div class="container">
+    <h1 class="mb-4">Dashboard</h1>
+
+    @if($posts->count() > 0)
+        @foreach($posts as $post)
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">{{ $post->user->name }}</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">{{ $post->title }}</h4>
+                    <p class="card-text">{{ $post->content }}</p>
+                    <small class="text-muted">Posted on {{ $post->created_at->format('M d, Y') }}</small>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ route('posts.show', $post->id) }}" class="btn btn-sm btn-info">View</a>
+                    <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
                 </div>
             </div>
-        </div>
-    </div>
-</x-app-layout>
+            @endforeach
+    @else
+        <p class="text-center">No posts found.</p>
+    @endif
+</div>
+@endsection

@@ -22,5 +22,22 @@ A simple Laravel-based content management system (CMS) designed for managing use
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/mini-cms-app.git
+git clone https://github.com/Ali-Belkhair/CMS_App.git
 cd mini-cms-app
+
+composer install
+cp .env.example .env
+php artisan key:generate
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_username
+DB_PASSWORD=your_database_password
+
+php artisan migrate
+php artisan db:seed
+php artisan serve
+
+Ali : IWA BISA7A ta7iyati 😉

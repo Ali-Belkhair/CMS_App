@@ -13,7 +13,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::with('user')->latest()->get();
+        // Fetch posts for the logged-in user
+        $posts = Post::where('user_id', auth()->id())->get();
         return view('posts.index', compact('posts'));
     }
 

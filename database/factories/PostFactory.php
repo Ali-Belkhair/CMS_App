@@ -14,6 +14,7 @@ class PostFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence(),
+            'image' => 'posts/example_images.jpg' ,
             'content' => $this->faker->paragraphs(3, true), // Generate 3 random paragraphs
             'user_id' => User::inRandomOrder()->first()->id, // Associate each post with a random user
         ];

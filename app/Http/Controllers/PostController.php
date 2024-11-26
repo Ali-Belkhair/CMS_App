@@ -1,24 +1,24 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
     /**
-     * Display a listing of the posts.
+     * Display a listing of the resource.
      */
     public function index()
     {
-        // Fetch posts for the logged-in user
-        $posts = Post::where('user_id', auth()->id())->get();
-
-        return view('posts.index', compact('posts')); 
+        $posts = Post::with('user')->latest()->get();
+        return view('posts.index', compact('posts'));
     }
 
     /**
-     * Show the form for creating a new post.
+     * Show the form for creating a new resource.
      */
     public function create()
     {
@@ -26,82 +26,86 @@ class PostController extends Controller
     }
 
     /**
-     * Store a newly created post in the database.
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
         ]);
 
+        $path = $request->file('image') ? $request->file('image')->store('posts', 'public') : null;
+
         Post::create([
-            'title' => $request->title,
-            'content' => $request->content,
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'image' => $path,
             'user_id' => auth()->id(),
         ]);
 
-        return redirect()->route('posts.index')->with('success', 'Post created successfully.');
+        return redirect()->route('posts.index')->with('success', 'Post created successfully!');
     }
 
     /**
-     * Display the specified post.
+     * Display the specified resource.
      */
     public function show(Post $post)
     {
-        // Ensure the user owns the post
-        if ($post->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
         return view('posts.show', compact('post'));
     }
 
     /**
-     * Show the form for editing the specified post.
+     * Show the form for editing the specified resource.
      */
     public function edit(Post $post)
     {
-        // Ensure the user owns the post
-        if ($post->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
         return view('posts.edit', compact('post'));
     }
 
     /**
-     * Update the specified post in the database.
+     * Update the specified resource in storage.
      */
     public function update(Request $request, Post $post)
     {
-        // Ensure the user owns the post
-        if ($post->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $request->validate([
-            'title' => 'required|max:255',
-            'content' => 'required',
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'image' => 'nullable|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
         ]);
 
-        $post->update($request->only(['title', 'content']));
+        if ($request->hasFile('image')) {
+            // Delete the old image if it exists
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
 
-        return redirect()->route('posts.index')->with('success', 'Post updated successfully.');
+            // Upload the new image
+            $path = $request->file('image')->store('posts', 'public');
+            $post->image = $path;
+        }
+
+        $post->update([
+            'title' => $validated['title'],
+            'content' => $validated['content'],
+            'image' => $post->image ?? null,
+        ]);
+
+        return redirect()->route('posts.index')->with('success', 'Post updated successfully!');
     }
 
     /**
-     * Remove the specified post from the database.
+     * Remove the specified resource from storage.
      */
     public function destroy(Post $post)
     {
-        // Ensure the user owns the post
-        if ($post->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
+        if ($post->image) {
+            Storage::disk('public')->delete($post->image);
         }
 
         $post->delete();
 
-        return redirect()->route('posts.index')->with('success', 'Post deleted successfully.');
+        return redirect()->route('posts.index')->with('success', 'Post deleted successfully!');
     }
 }

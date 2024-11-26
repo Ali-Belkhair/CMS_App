@@ -12,9 +12,15 @@
                 </div>
                 <div class="card-body">
                     <h4 class="card-title">{{ $post->title }}</h4>
+                    @if ($post->image)
+                        <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top" alt="Post Image">
+                        {{-- <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid"> --}}
+                    @endif
                     <p class="card-text">{{ $post->content }}</p>
                     <small class="text-muted">Posted on {{ $post->created_at->format('M d, Y') }}</small>
                 </div>
+
+                @if(auth()->user()->role === 'admin')
                 <div class="card-footer">
                     <a href="{{ route('posts.show', $post->id) }}" class="btn btn-sm btn-info">View</a>
                     <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-sm btn-warning">Edit</a>
@@ -24,6 +30,8 @@
                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                     </form>
                 </div>
+                @endif
+
             </div>
             @endforeach
     @else

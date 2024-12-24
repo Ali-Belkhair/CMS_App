@@ -16,8 +16,6 @@
                         <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top" alt="Post Image">
                         {{-- <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid"> --}}
                     @endif
-                    
-                    {{-- <p class="card-text">{{ $post->content }}</p> --}}
 
                     <div class="post-content">
                         {!! $post->content !!}

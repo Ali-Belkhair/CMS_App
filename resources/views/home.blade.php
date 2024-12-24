@@ -41,8 +41,13 @@
 
     <header class="py-5 text-center bg-primary text-white">
         <div class="container">
+            <div>
+                <img src="{{ asset('storage/logo.png') }}" alt="Hamy CMS Logo" width="200" height="200" class="me-2 rounded-circle">
+            </div>
+            <br>
             <h1>Welcome to HAMY CMS</h1>
             <p class="lead">Your go-to content management system for creating and managing posts.</p>
+            <br>
         </div>
     </header>
 
@@ -57,7 +62,9 @@
                             <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top" alt="{{ $post->title }}" style="height: 200px; object-fit: cover;">
                             <div class="card-body">
                                 <h5 class="card-title">{{ $post->title }}</h5>
-                                <p class="card-text">{{ Str::limit($post->content, 100, '...') }}</p>
+                                <div class="post-content">
+                                    {!! $post->content !!}
+                                </div>
                                 <a href="{{ route('posts.show', $post->id) }}" class="btn btn-primary">Read More</a>
                             </div>
                         </div>

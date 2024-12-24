@@ -1,39 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header bg-primary text-white">
-            <h3>{{ $post->title }}</h3>
+<div class="container">
+    <div class="card my-4">
+        <div class="card-header">
+            <h1>{{ $post->title }}</h1>
         </div>
         <div class="card-body">
-            <p class="card-text">
-                {{ $post->content }}
-            </p>
-            <p class="text-muted">
-                <strong>Author:</strong> {{ $post->user->name }}
-            </p>
-            <p class="text-muted">
-                <strong>Published on:</strong> {{ $post->created_at->format('F j, Y, g:i a') }}
-            </p>
-        </div>
-        <div class="card-footer">
-            <a href="{{ route('posts.index') }}" class="btn btn-secondary">Back to Posts</a>
+            @if ($post->image)
+                <div class="mb-4 text-center">
+                    <img src="{{ asset('storage/' . $post->image) }}" class="img-fluid" alt="{{ $post->title }}">
+                </div>
+            @endif
 
-            @can('update', $post)
-                <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-warning">Edit</a>
-            @endcan
-
-            @can('delete', $post)
-                <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this post?');">
-                        Delete
-                    </button>
-                </form>
-            @endcan
+            <div class="post-content">
+                {!! $post->content !!}
+            </div>
         </div>
+        <div class="card-footer text-muted">
+            <small>Posted on {{ $post->created_at->format('M d, Y') }} by {{ $post->user->name ?? 'Admin' }}</small>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a href="{{ route('posts.index') }}" class="btn btn-secondary">Back to Posts</a>
+        <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-primary">Edit Post</a>
+        
+        <form action="{{ route('posts.destroy', $post->id) }}" method="POST" style="display:inline-block;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this post?');">Delete Post</button>
+        </form>
     </div>
 </div>
 @endsection
+

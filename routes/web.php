@@ -5,7 +5,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Middleware\RoleMiddleware;
+
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -20,11 +24,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class)
         ->middleware([RoleMiddleware::class . ':admin'])
         ->names('admin.users'); // Ensure the resource names are prefixed
-});
-
-
-Route::get('/', function () {
-    return view('welcome');
 });
 
 Route::middleware('auth')->group(function () {

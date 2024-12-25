@@ -6,17 +6,20 @@
 
     @if($posts->count() > 0)
         @foreach($posts as $post)
-            <div class="card shadow-sm mb-4">
+
+            <div class="card shadow-sm mb-4 mx-auto" style="max-width: 700px;">
+
                 <div class="card-header bg-primary text-white">
                     <h3 class="mb-0">{{ $post->user->name }}</h3>
                 </div>
                 <div class="card-body">
                     <h4 class="card-title">{{ $post->title }}</h4>
-                    @if ($post->image)
-                        <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top" alt="Post Image">
-                        {{-- <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid"> --}}
-                    @endif
 
+                    @if ($post->image)
+
+                    <img src="{{ asset('storage/' . $post->image) }}" alt="Post Image" class="img-fluid mx-auto d-block" style="max-height: 70%; max-width: 100%; height: auto;">
+                    
+                    @endif
                     <div class="post-content">
                         {!! $post->content !!}
                     </div>
@@ -37,7 +40,8 @@
                 @endif
 
             </div>
-            @endforeach
+            
+        @endforeach
     @else
         <p class="text-center">No posts found.</p>
     @endif
